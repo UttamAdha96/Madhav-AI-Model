@@ -13,3 +13,16 @@ Clone this repo to your local machine using https://github.com/UttamAdha96/Madha
 ```bash
 MadhavAI.py file 
 ```
+
+<h3>Main UI</h3>
+
+![image](https://github.com/UttamAdha96/Madhav-AI-Model/assets/101659796/2106f224-47d8-4412-94d9-424573850508)
+
+<h3> Listening and printing Tasks</h3>
+
+![image](https://github.com/UttamAdha96/Madhav-AI-Model/assets/101659796/6c64818c-5734-46a9-97df-6602ca754ff3)
+
+<h3>Performing task: typing</h3>
+
+![image](https://github.com/UttamAdha96/Madhav-AI-Model/assets/101659796/5fb77741-4bf4-47b5-b27f-2ba1d68009af)
+
