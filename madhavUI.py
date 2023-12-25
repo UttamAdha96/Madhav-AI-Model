@@ -14,15 +14,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MadhavUI(object):
     def setupUi(self, MadhavUI):
         MadhavUI.setObjectName("MadhavUI")
-        MadhavUI.resize(1417, 808)
+        # MadhavUI.resize(1417, 808)
+        MadhavUI.resize(1800, 909)
         self.centralwidget = QtWidgets.QWidget(MadhavUI)
         self.centralwidget.setObjectName("centralwidget")
+
+        #code for GUI background. (rotating iron man) 
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(0, 0, 1411, 901))
+        self.label_3.setGeometry(QtCore.QRect(0, 0, 1800, 950))
         self.label_3.setText("")
-        self.label_3.setPixmap(QtGui.QPixmap("UI designs/7LP8.gif"))
+        self.label_3.setPixmap(QtGui.QPixmap("UIdesigns/7LP8.gif"))
         self.label_3.setScaledContents(True)
         self.label_3.setObjectName("label_3")
+
+        #code for Upper heading ( welcome Uttam Sir) 
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(20, 20, 591, 81))
         font = QtGui.QFont()
@@ -36,56 +41,101 @@ class Ui_MadhavUI(object):
         self.label.setText("<html><head/><body><p><span style=\" color:#ffffff;\">Welcome Uttam Sir !!</span></p></body></html>")
         self.label.setTextFormat(QtCore.Qt.RichText)
         self.label.setObjectName("label")
+
+
+        #code for sound circle wave gif: 
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(0, 380, 401, 441))
+        self.label_2.setGeometry(QtCore.QRect(70, 460, 401, 441))
         self.label_2.setText("")
-        self.label_2.setPixmap(QtGui.QPixmap("UI designs/QjoV.gif"))
+        self.label_2.setPixmap(QtGui.QPixmap("UIdesigns/QjoV.gif"))
         self.label_2.setObjectName("label_2")
+
+        #code for uper loading gif
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setGeometry(QtCore.QRect(10, 100, 401, 141))
         self.label_4.setText("")
-        self.label_4.setPixmap(QtGui.QPixmap("UI designs/Jarvis_Loading_Screen.gif"))
+        self.label_4.setPixmap(QtGui.QPixmap("UIdesigns/Jarvis_Loading_Screen.gif"))
         self.label_4.setScaledContents(False)
         self.label_4.setObjectName("label_4")
+
+        #code for button (run)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(1180, 730, 93, 41))
+        self.pushButton.setGeometry(QtCore.QRect(1480, 730, 93, 41))
         self.pushButton.setStyleSheet("background-color: rgb(230, 0, 0);\n"
 "font: 75 11pt \"Nirmala UI\";\n"
 "color: rgb(255, 255, 255);")
         self.pushButton.setIconSize(QtCore.QSize(15, 40))
         self.pushButton.setObjectName("pushButton")
+
+        #code for button2 (stop)
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(1280, 730, 93, 41))
+        self.pushButton_2.setGeometry(QtCore.QRect(1580, 730, 93, 41))
         self.pushButton_2.setStyleSheet("background-color: rgb(230, 0, 0);\n"
 "font: 75 11pt \"Nirmala UI\";\n"
 "color: rgb(255, 255, 255);")
         self.pushButton_2.setObjectName("pushButton_2")
+
+        # output try
+        # self.frame = QtWidgets.QFrame (MadhavUI)
+        # self.frame.setGeometry (QtCore.QRect(1200, 100, 550, 500))
+        # self.frame.setStyleSheet("background: none;")
+        # self.frame.setFrameShape (QtWidgets.QFrame.StyledPanel)
+        # self.frame.setFrameShadow(QtWidgets.QFrame. Raised)
+        # self.frame.setObjectName("frame")
+
+        #outputbox
+        self.terminalOutputBox = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.terminalOutputBox.setGeometry (QtCore.QRect(1200, 100, 550, 500))
+        self.terminalOutputBox.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        self.terminalOutputBox.setMouseTracking (True)
+        self.terminalOutputBox.setStyleSheet("border-color: rgb(255, 255, 255);\n"
+                                                "background: transparent;\n"
+                                                "font: 14pt \"Karisma\";\n"
+                                                "color: rgb(255, 255, 255);\n"
+                                                "border-style: solid white;\n"
+                                                "border-width: 1px 1px 1px 1px;\n"
+                                                "padding-left:5px;")
+        self.terminalOutputBox.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.terminalOutputBox.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.terminalOutputBox.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow)
+        self.terminalOutputBox.setReadOnly(True)
+        self.terminalOutputBox.setPlainText("")
+        self.terminalOutputBox.setOverwriteMode (True)
+        self.terminalOutputBox.setTextInteractionFlags(
+        QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByKeyboard | QtCore.Qt.TextSelectableByMouse)
+        self.terminalOutputBox.setCenterOnScroll(True)
+        self.terminalOutputBox.setObjectName("terminalOutputBox")
+
+
+        #code for text ( date) 
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
-        self.textBrowser.setGeometry(QtCore.QRect(920, 30, 241, 61))
+        self.textBrowser.setGeometry(QtCore.QRect(1380, 30, 241, 61))
         self.textBrowser.setStyleSheet("font: 18pt \"MS UI Gothic\";\n"
 "background: transparent;\n"
 "border-radius: none;\n"
 "color:#ffffff;")
         self.textBrowser.setObjectName("textBrowser")
+
+        #code for text (time)
         self.textBrowser_2 = QtWidgets.QTextBrowser(self.centralwidget)
-        self.textBrowser_2.setGeometry(QtCore.QRect(1170, 30, 201, 61))
+        self.textBrowser_2.setGeometry(QtCore.QRect(1580, 30, 201, 61))
         self.textBrowser_2.setStyleSheet("font: 18pt \"MS UI Gothic\";\n"
 "background: transparent;\n"
 "border-radius: none;\n"
 "color:#ffffff;")
         self.textBrowser_2.setObjectName("textBrowser_2")
-        self.textBrowser_3 = QtWidgets.QTextBrowser(self.centralwidget)
-        self.textBrowser_3.setGeometry(QtCore.QRect(920, 240, 441, 431))
-        self.textBrowser_3.setStyleSheet("font: 11pt \"MS UI Gothic\";\n"
-"color: rgb(255, 255, 255);\n"
-"background-color: rgb(0, 0, 0);")
-        self.textBrowser_3.setObjectName("textBrowser_3")
-        self.label_5 = QtWidgets.QLabel(self.centralwidget)
-        self.label_5.setGeometry(QtCore.QRect(920, 190, 441, 51))
-        self.label_5.setStyleSheet("font: 75 18pt \"MS Shell Dlg 2\";\n"
-"color:rgb(0, 0, 0);\n"
-"background-color: rgb(255, 255, 255);")
-        self.label_5.setObjectName("label_5")
+#         self.textBrowser_3 = QtWidgets.QTextBrowser(self.centralwidget)
+#         self.textBrowser_3.setGeometry(QtCore.QRect(920, 180, 441, 431))
+#         self.textBrowser_3.setStyleSheet("font: 11pt \"MS UI Gothic\";\n"
+# "color: rgb(255, 255, 255);\n"
+# "background-color: rgb(0, 0, 0);")
+#         self.textBrowser_3.setObjectName("textBrowser_3")
+#         self.label_5 = QtWidgets.QLabel(self.centralwidget)
+#         self.label_5.setGeometry(QtCore.QRect(920, 100, 441, 51))
+#         self.label_5.setStyleSheet("font: 75 18pt \"MS Shell Dlg 2\";\n"
+# "color:rgb(0, 0, 0);\n"
+# "background-color: rgb(255, 255, 255);")
+        # self.label_5.setObjectName("label_5")
         MadhavUI.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MadhavUI)
@@ -96,7 +146,7 @@ class Ui_MadhavUI(object):
         MadhavUI.setWindowTitle(_translate("MadhavUI", "MainWindow"))
         self.pushButton.setText(_translate("MadhavUI", "RUN"))
         self.pushButton_2.setText(_translate("MadhavUI", "STOP"))
-        self.label_5.setText(_translate("MadhavUI", " Madhav Terminal"))
+        # self.label_5.setText(_translate("MadhavUI", " Madhav Terminal"))
 
 
 if __name__ == "__main__":
