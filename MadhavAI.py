@@ -6,8 +6,9 @@ import speech_recognition as sr
 import datetime
 import wikipedia 
 import webbrowser
+import pywhatkit
 import os
-import smtplib
+import smtplib #for mail
 #import openai as ai
 # for GUI : 
 from PyQt5 import QtWidgets, QtCore,QtGui
@@ -22,8 +23,10 @@ from madhavUI import Ui_MadhavUI # from UI file [madhavUI.py] we are importing U
 ###########Importing other python files#######
 from difflib import get_close_matches
 import json
-from random import choice
-#from web_scrapping import latestNews()
+from random import choices
+import normal_chat
+from app_control import *
+from web_scrapping import *
  
 
 
@@ -64,189 +67,160 @@ def wishMe():
         speak("Good Afternoon sir!")   
     else:
         speak("Good Evening sir!")  
-#function to translate 
-def lang_translate(text,language):
-	from googletrans import Translator, LANGUAGES
-	if language in LANGUAGES.values():
-		translator = Translator()
-		result = translator.translate(text, src='en', dest=language)
-		return result
+
+dictdata = json.load(open('assets/dict_data.json', encoding='utf-8'))
+def getMeaning(word):
+	if word in dictdata:
+		return word, dictdata[word]
+	elif len(get_close_matches(word, dictdata.keys())) > 0:
+		word = get_close_matches(word, dictdata.keys())[0]
+		return word, dictdata[word], 0
 	else:
-		return "None"
+		return word, ["This word doesn't exists in the dictionary."], -1
 
 
-data = json.load(open('assets/normal_chat.json', encoding='utf-8'))
-def reply(query):
-	if query in data:
-		response =  data[query]
-	else:
-		query = get_close_matches(query, data.keys(), n=2, cutoff=0.6)
-		if len(query)==0: return "None"
-		return choice(data[query[0]])
-	return choice(response)
-
-#function to send email from my email id and password
-def sendEmail(to, content):  
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.ehlo()
-    server.starttls()
-    server.login("uttamadha123@gmail.com", "Officialuttam@123")
-    server.sendmail("uttamadha123@gmail.com", to, content)
-    server.close()
 
 class MainThread(QThread):
     def __init__(self):
         super(MainThread,self).__init__()
 
-    def run(self):
-        #self.TaskExecution()   (with this direct program will start )
-        #start program with my command: 
-        speak("Your personal Assistent program started. Waiting for your command.")
-        while True:
-            self.query = self.takeCommand()
-            if "wake up" in self.query or "let's start madhav" in self.query or "hello madhav" in self.query:
-                speak("for u always up sir")
-                print("for u always up sir")
-                self.TaskExecution()
-         
-#function to take commands from me(work as ears)
+    #function to take commands from me(work as ears)
     def takeCommand(self):
         #It takes microphone input from the user and returns output
         r = sr.Recognizer()
         with sr.Microphone() as source:
-            print("Listening...")
+            madhavAI.terminalPrint("Jarvis: Listening...")
             r.pause_threshold = 1
             audio = r.listen(source)
         try:
-            print("Recognizing sir...")
+            madhavAI.terminalPrint("Jarvis: Recognizing sir...")
             query = r.recognize_google(audio, language='en-in')
-            print(f"you said: {query}\n")
+            madhavAI.terminalPrint(f"you said: {query}\n")
         except Exception as e:
-            print("Say that again sir...") 
+            madhavAI.terminalPrint("Jarvis: Say that again sir...") 
             return "None"
         return query
-
+    
     def TaskExecution(self):
-        wishMe()
-        speak("What We are doing today sir.") 
+         speak("Anything else sir") 
+
+    
+
+    def run(self):
+        speak("Your personal Assistent program started. Waiting for your command.")
         while True:
-            self.query = self.takeCommand().lower()
+            self.query = self.takeCommand()
+            
+            if 'morning' in self.query or 'evening' in self.query or 'noon' in self.query:
+                wishMe()
 
-
-############# get information : ###########
-        #1) using wikipedia
             if 'tell me about' in self.query:
                 speak('Searching Wikipedia about this sir')
                 self.query = self.query.replace("wikipedia", "")
                 results = wikipedia.summary(self.query, sentences=2)
                 speak("According to Wikipedia")
-                print(results)
+                madhavAI.terminalPrint(results)
                 speak(results)
+            
+            if 'meaning' in self.query or 'dictionary' in self.query or'definition' in self.query or 'define' in self.query:
+                speak('Specify the word to be searched.')
+                madhavAI.terminalPrint('Specify the word to be searched.')
+                wd =  self.takeCommand()
+                meaning_result = getMeaning(wd)
+                madhavAI.terminalPrint(meaning_result)
+                speak("Meaning of " + str(wd) + " is: " + str(meaning_result))
 
-            elif 'open google' in self.query:
+            if 'battery' in self.query or  'system info' in self.query:
+                result = OSHandler(self.query)
+                if len(result)==2:
+                    speak(result[0])
+                    madhavAI.terminalPrint(result[1])
+                else:
+                    speak(result)
+            
+            if 'volume' in self.query:
+                volumeControl(self.query)		
+                speak('Volume Settings Changed')
+            
+            if 'screenshot' in self.query:
+                Win_Opt(self.query)
+                madhavAI.terminalPrint("Screen Shot taken")
+                speak("Screen Shot Taken")
+
+            
+            if 'open Google' in self.query:
                 speak('What do you want to search on google')
-                cm = self.takeCommand()
+                madhavAI.terminalPrint('What do you want to search on google')
+                cm =  self.takeCommand()
                 webbrowser.open(f"{cm}")
                 speak("Openning google and searching"+f"{cm}" +"sir please wait..")
             
-            #elif 'news' in self.query:
-             #   speak('Getting the latest news...')
-              #  headlines,headlineLinks = web_scrapping.latestNews(2)
-               # for head in headlines: speak(head, True)
-               # speak('Do you want to read the full news?', True)
-                #text = self.takeCommand()
-              #  if 'no' in self.query:
-               #     speak("No Problem sir")
-                #else:
-                #    speak("Ok, Opening browser...", True)
-                #    web_scrapping.openWebsite('https://indianexpress.com/latest-news/')
-                #    speak("You can now read the full news from this website.")
-                #return
 
-            elif 'translate' in self.query:
-                speak("What do you want to translate?", True, True)
-                sentence = self.takeCommand()
-                speak("Which langauage to translate ?", True)
-                langauage = self.takeCommand()
-                result = lang_translate(sentence, langauage)
-                if result=="None": speak("This langauage doesn't exists")
-                else:
-                    speak(f"In {langauage.capitalize()} you would say:", True)
-                    if langauage=="hindi":
-                        print(result.text, True)
-                        speak(result.pronunciation)
-                    else: speak(result.text, True)
-                return
-
-
-    #working on youtube
-            elif 'open youtube' in self.query:
-                webbrowser.open("www.youtube.com")
-                speak("Opening Youtube sir please wait..")
+            if 'open YouTube' in self.query:
+                speak('What do you want to play on Youtube')
+                madhavAI.terminalPrint('What do you want to paly on Youtube')
+                cm =  self.takeCommand()
+                Youresult= "https://www.youtube.com/results?search_query=" + cm
+                webbrowser.open(Youresult)
+                pywhatkit.playonyt(Youresult)
+                speak("Openning Youtube and playing"+f"{cm}" +"sir please wait..")
+                madhavAI.terminalPrint("Openning Youtube and playing"+f"{cm}" +"sir please wait..")
+                # self.query = self.query.replace("")
+                # Youresult= "https://www.youtube.com/results?search_query=" + self.query
+                # webbrowser.open(Youresult)
+                # pywhatkit.playonyt(Youresult)
+                # madhavAI.terminalPrint("Opening Youtube sir please wait..")
                 
             
-            elif 'open my chrome' in self.query:
-                codePath= "C:\\Users\\Dell\\Documents\\Uttam (uttam adha) - Chrome"
+            if 'open my chrome' in self.query:
+                codePath= "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
                 os.startfile(codePath)
 
-    #music
-            elif 'play music' in self.query:
-                music_dir = 'D:\\Music'
+            if 'play music' in self.query:
+                music_dir = "C:\\Users\\Uttam\\Music"
                 songs = os.listdir(music_dir)
                 speak("Playing Songs sir please wait..")
                 print(songs)    
                 os.startfile(os.path.join(music_dir, songs[5]))
 
+            if 'type' in self.query or'save' in self.query or 'delete'in self.query or'select'in self.query or'enter' in self.query:
+                System_Opt(self.query)
+
+            if 'open Word' in self.query or 'open Notepad' in self.query or 'open calculator' in self.query or 'open Paint' in self.query:
+                System_Opt(self.query)
+
+            if 'window' in self.query or 'close that' in self.query:
+                Win_Opt(self.query)
             
+            if 'tab' in self.query:
+                Tab_Opt(self.query)
+            
+            
+
+
+            if 'date' or 'time' in self.query:
+                speak(normal_chat.chat(self.query))
+                madhavAI.terminalPrint(normal_chat.chat(self.query))
+
     #working on myfiles
-            elif 'open my web dev folder' in self.query:
-                codePath= "C:\\Users\\Dell\\Desktop\\web dev"
-                os.startfile(codePath)
+            # if 'open my data science folder' in self.query:
+            #     codePath= "D:\\Data science"
+            #     os.startfile(codePath)
 
-            elif 'open my movies' in self.query:
-                codePath = "D:\MY movies"
-                os.startfile(codePath)
-                speak("Opening your movies folder sir..")
+            # if 'open my movies' in self.query:
+            #     codePath = "E:\\Movies"
+            #     os.startfile(codePath)
+            #     speak("Opening your movies folder sir..")
             
-
-
-
-    #sending mail to person
-
-            elif 'email to harsh' in self.query:
-                try:
-                    speak("What should I say?")
-                    content = self.takeCommand()
-                    print(content)
-                    to = "harshparmar4760@gmail.com"    
-                    sendEmail(to, content)
-                    speak("Email has been sent!")
-                except Exception as e:
-                    print(e)
-                    speak("Sorry!! I am not able to send this email")
-
 
     #closing program
-            elif 'close the program' in self.query:
+            if 'close the program' in self.query:
                 speak("Closing program sir,..see you afterwards.")
-                codePath= "C:\\Users\\Dell\\Desktop\\AI\\Python code\\jarvisdemo.py"
+                codePath= "MadhavAI.py"
                 os.closefile(codePath)
 
-############Smart replies#######
-            if 'morning' in self.query or 'evening' in self.query or 'noon' in self.query:
-                wishMe()
-                return
 		
-            result = reply(self.query)
-            if result != "None": speak(result, True, True)
-            else:
-                speak("I don't know anything about this. Do you want to search it on web?", True, True)
-                response = self.takeCommand()
-                if 'no' in self.query:
-                    speak("Ok ")
-                else:
-                    speak("Here's what I found on the web... ")
-                   # web_scrapping.googleSearch(text)
+            
                 
 
 
@@ -261,13 +235,13 @@ class Main(QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.close)
 
     def startTask(self):
-        self.ui.movie = QtGui.QMovie("C:\\Users\\Dell\\Desktop\\AI\\MadhavAI\\UI designs\\QjoV.gif")
+        self.ui.movie = QtGui.QMovie("D:\\My Projects\\MadhavAI\\UIdesigns\\QjoV.gif")
         self.ui.label_2.setMovie(self.ui.movie)
         self.ui.movie.start() 
-        self.ui.movie = QtGui.QMovie("C:\\Users\\Dell\\Desktop\\AI\\MadhavAI\\UI designs\\7LP8.gif")
+        self.ui.movie = QtGui.QMovie("D:\\My Projects\\MadhavAI\\UIdesigns\\7LP8.gif")
         self.ui.label_3.setMovie(self.ui.movie) 
         self.ui.movie.start()
-        self.ui.movie = QtGui.QMovie("C:\\Users\\Dell\\Desktop\\AI\\MadhavAI\\UI designs\\Jarvis_Loading_Screen.gif")
+        self.ui.movie = QtGui.QMovie("D:\\My Projects\\MadhavAI\\UIdesigns\\Jarvis_Loading_Screen.gif")
         self.ui.label_4.setMovie(self.ui.movie) 
         self.ui.movie.start()
         timer = QTimer(self)
@@ -286,12 +260,19 @@ class Main(QMainWindow):
         label_date = current_date.toString(Qt.ISODate)
         self.ui.textBrowser.setText(label_date)
         self.ui.textBrowser_2.setText(label_time)
-  
 
-app = QApplication(sys.argv)
-madhavAI = Main()
-madhavAI.show()
-exit(app.exec_())
+    def terminalPrint(self, text):
+        if isinstance(text, tuple):
+            text = ' '.join(str(item) for item in text)
+        self.ui.terminalOutputBox.appendPlainText(text)
+
+
+
+if __name__ =='__main__':
+    app = QApplication(sys.argv)
+    madhavAI = Main()
+    madhavAI.show()
+    exit(app.exec_())
 
 
 
