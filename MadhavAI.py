@@ -118,9 +118,9 @@ class MainThread(QThread):
                 speak('Searching Wikipedia about this sir')
                 self.query = self.query.replace("wikipedia", "")
                 results = wikipedia.summary(self.query, sentences=2)
-                speak("According to Wikipedia")
-                madhavAI.terminalPrint(results)
-                speak(results)
+		speak("According to Wikipedia")
+		madhavAi.terminalPrint(results)
+		speak(results)
             
             if 'meaning' in self.query or 'dictionary' in self.query or'definition' in self.query or 'define' in self.query:
                 speak('Specify the word to be searched.')
